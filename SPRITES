@@ -1,0 +1,61 @@
+#include <SFML/Graphics.hpp>
+
+int main()
+{
+    // Create the window
+    sf::RenderWindow window(sf::VideoMode(800, 600), "SFML Sprite Animation");
+
+    // Load the sprite sheet
+    sf::Texture texture;
+    if (!texture.loadFromFile("sprites.png")) {
+        return EXIT_FAILURE;
+    }
+
+    // Define the sprite size and position
+    sf::Vector2i spriteSize(50, 166); // Narrower width but large height
+    sf::Sprite player(texture);
+
+    // Set the initial frame of the animation
+    sf::IntRect frameRect(0, 0, spriteSize.x, spriteSize.y);
+    player.setTextureRect(frameRect);
+    player.setPosition(window.getSize().x / 2.f, window.getSize().y / 2.f);
+
+    // Define animation variables
+    sf::Clock clock;
+    float frameDuration = 0.1f; // Time between each frame (adjust for desired animation speed)
+    int frameCount = 4; // Number of frames in the sprite sheet
+    int currentFrame = 0;
+
+    // Main loop
+    while (window.isOpen())
+    {
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+
+        // Update animation
+        if (clock.getElapsedTime().asSeconds() >= frameDuration)
+        {
+            // Move to the next frame
+            currentFrame = (currentFrame + 1) % frameCount;
+            // Update the texture rect to display the current frame
+            frameRect.left = currentFrame * spriteSize.x;
+            player.setTextureRect(frameRect);
+            clock.restart();
+        }
+
+        // Clear the window
+        window.clear();
+
+        // Draw the player sprite
+        window.draw(player);
+
+        // Display the window contents
+        window.display();
+    }
+
+    return EXIT_SUCCESS;
+}
